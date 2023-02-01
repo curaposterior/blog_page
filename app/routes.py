@@ -6,6 +6,7 @@ from werkzeug.urls import url_parse
 from app.forms import LoginForm, RegistrationForm
 from app import app, db
 from app.models import User, Post
+from sqlalchemy.exc import IntegrityError
 
 # ENDPOINTS aren't working yet
 @app.route("/", methods=['GET','POST'])
@@ -20,10 +21,14 @@ def register():
         return redirect(url_for('index'))
     form = RegistrationForm()
     if form.validate_on_submit():
-        user = User(username=form.username.data, email=form.email.data)
+        user = User(username=form.username.data)
         user.set_password(form.password.data)
-        db.session.add(user)
-        db.session.commit()
+        try:
+            db.session.add(user)
+            db.session.commit()
+        except IntegrityError:
+            flash('Try different username')
+            return redirect(url_for('register'))
         flash('Congratulations, you are now a registered user!')
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
@@ -62,4 +67,4 @@ def admin():
 
 @app.route("/about", methods=['GET'])
 def about():
-    return "<h1>Site under construction</h1>"
+    return render_template("about.html")
