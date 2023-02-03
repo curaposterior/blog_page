@@ -16,20 +16,30 @@
         {% endblock %}
     </head>
     <body>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <ul class="nav navbar-nav">
-                {{ render_nav_item('index', 'Home') }}
-            </ul>
-            <div class="navbar-nav navbar-right">
-                {% if current_user.is_anonymous %}
-                    {{ render_nav_item('login', 'Login') }}
-                    {{ render_nav_item('about', 'About') }}
-                {% else %}
-                    {{ render_nav_item('admin', 'Admin Panel') }}
-                    {{ render_nav_item('logout', 'Logout') }}
-                {% endif %}
+        <nav class="navbar navbar-expand-lg sticky-top navbar-dark bg-dark">
+            <div class="container-fluid">
+              <a class="navbar-brand" href="{{ url_for('index') }}">Home</a>
+              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+              <div class="collapse navbar-collapse" id="navbarText">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                  <!-- <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="{{ url_for('index') }}">Home</a>
+                  </li> -->
+                    {% if current_user.is_anonymous %}
+                        {{ render_nav_item('login', 'Login') }}
+                    {% else %}
+                        {{ render_nav_item('admin', 'Admin Panel') }}
+                        {{ render_nav_item('logout', 'Logout') }}
+                    {% endif %}
+                </ul>
+                <span class="nav-item">
+                  <a class="nav-link" style="color: white;" href="{{ url_for('about') }}">About</a>
+                </span>
+              </div>
             </div>
-        </nav>
+          </nav>
         <!-- Your page content -->
         {% with messages = get_flashed_messages() %}
         {% if messages %}
@@ -38,18 +48,22 @@
             {% endfor %}
         {% endif %}
         {% endwith %}
-
+        
         {# application content needs to be provided in the app_content block #}
-
-        {% block content %}{% endblock %}
-
+        
+        <!-- <div class="text-center">
+        {# block content #}{# endblock #}
+        </div> -->
+        <main class="container">
+          {% block content %}{% endblock %}
+        </main>
         {% block scripts %}
             <!-- Optional JavaScript -->
             {{ bootstrap.load_js() }}
         {% endblock %}
         <footer class="text-center">
             <small> &copy;<script>document.write(new Date().getFullYear())</script> <a href="https://github.com/curaposterior">Curaposterior</a>
-            <br>(Build with Bootstrap5)</small>
+            <br>(Build with <a href="https://getbootstrap.com/docs/5.0/getting-started/introduction/">Bootstrap5</a>)</small>
         </footer>
     </body>
 </html>
