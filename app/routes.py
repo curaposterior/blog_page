@@ -4,7 +4,7 @@ from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
 import sqlalchemy
 
-from app.forms import LoginForm, RegistrationForm
+from app.forms import LoginForm, RegistrationForm, SendMailForm
 from app import app, db
 from app.models import User, Post
 from sqlalchemy.exc import IntegrityError, DataError
@@ -15,79 +15,6 @@ import markdown
 @app.route("/", methods=['GET','POST'])
 @app.route("/home", methods=['GET','POST'])
 def index():
-    posts = [
-        {
-            "id": 1,
-            "title": "My very first post",
-            "description": "simplicity, knowing that it'll be easy to extend in",
-            "body": "## There is body of post",
-            "timestamp": datetime.now()
-        },
-        {
-            "id": 2,
-            "title": "My very second post",
-            "description": "Thave the following columns",
-            "body": "## There is body of post",
-            "timestamp": datetime.now()
-        },
-        {
-            "id": 3,
-            "title": "My very third post",
-            "description": """atically will create an auto-incrementing primary key for us, so we don't need to define this explicitly.
-            atically will create an auto-incrementing primary key for us, so we don't need to define this explicitly.
-            atically will create an auto-incrementing primary key for us, so we don't need to define this explicitly.
-            atically will create an auto-incrementing primary key for us, so we don't need to define this explicitly.
-            atically will create an auto-incrementing primary key for us, so we don't need to define this explicitly.
-            atically will create an auto-incrementing primary key for us, so we don't need to define this explicitly.
-            atically will create an auto-incrementing primary key for us, so we don't need to define this explicitly.
-            atically will create an auto-incrementing primary key for us, so we don't need to define this explicitly.
-            atically will create an auto-incrementing primary key for us, so we don't need to define this explicitly.
-            atically will create an auto-incrementing primary key for us, so we don't need to define this explicitly.
-            atically will create an auto-incrementing primary key for us, so we don't need to define this explicitly.
-            atically will create an auto-incrementing primary key for us, so we don't need to define this explicitly.
-            atically will create an auto-incrementing primary key for us, so we don't need to define this explicitly.
-            atically will create an auto-incrementing primary key for us, so we don't need to define this explicitly.
-            atically will create an auto-incrementing primary key for us, so we don't need to define this explicitly.
-            atically will create an auto-incrementing primary key for us, so we don't need to define this explicitly.
-            """,
-            "body": "## There is body of post",
-            "timestamp": datetime.now()
-        },
-        {
-            "id": 4,
-            "title": "My very forth post",
-            "description": "Search content for the given entry.",
-            "body": "## There is body of post",
-            "timestamp": datetime.now()
-        },
-        {
-            "id": 5,
-            "title": "My very fifth post",
-            "description": """atically will create an auto-incrementing primary key for us, so we don't need to define this explicitly.
-            atically will create an auto-incrementing primary key for us, so we don't need to define this explicitly.
-            atically will create an auto-incrementing primary key for us, so we don't need to define this explicitly.
-            atically will create an auto-incrementing primary key for us, so we don't need to define this explicitly.
-            atically will create an auto-incrementing primary key for us, so we don't need to define this explicitly.
-            atically will create an auto-incrementing primary key for us, so we don't need to define this explicitly.
-            atically will create an auto-incrementing primary key for us, so we don't need to define this explicitly.
-            atically will create an auto-incrementing primary key for us, so we don't need to define this explicitly.
-            atically will create an auto-incrementing primary key for us, so we don't need to define this explicitly.
-            atically will create an auto-incrementing primary key for us, so we don't need to define this explicitly.
-            atically will create an auto-incrementing primary key for us, so we don't need to define this explicitly.
-            atically will create an auto-incrementing primary key for us, so we don't need to define this explicitly.
-            atically will create an auto-incrementing primary key for us, so we don't need to define this explicitly.
-            atically will create an auto-incrementing primary key for us, so we don't need to define this explicitly.
-            atically will create an auto-incrementing primary key for us, so we don't need to define this explicitly.
-            atically will create an auto-incrementing primary key for us, so we don't need to define this explicitly.
-            """,
-            "body": "## There is body of post",
-            "timestamp": datetime.now()
-        },
-    ]
-    
-    # page = request.args.get('page', 1, type=int)
-    #add pagination
-    # next_url = url_for('index', page=posts.next_num)
     page = request.args.get('page', type=int)
     pagination = db.session.query(Post).paginate(page=page, per_page=10)
     posts = pagination.items
@@ -146,7 +73,11 @@ def admin():
 
 @app.route("/about", methods=['GET'])
 def about():
-    return render_template("about.html")
+    form = SendMailForm()
+    if form.validate_on_submit():
+        flash("Email sent")
+        redirect(url_for('about'))
+    return render_template("about.html", form=form)
 
 @app.route("/post/<int:post_id>", methods=['GET'])
 def post(post_id: int):
@@ -166,3 +97,8 @@ def post(post_id: int):
     
     
     return render_template("render_post.html", post=post)
+
+@login_required
+@app.route("/test", methods=['GET', 'POST'])
+def test():
+    return render_template('test_bootstrap.html')
