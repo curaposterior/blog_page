@@ -12,7 +12,8 @@
                 <!-- Bootstrap CSS -->
                 {{ bootstrap.load_css() }}
             {% endblock %}
-            <title>That is my title page</title>
+            
+            <title>{% block title %}{% endblock %}</title>
         {% endblock %}
     </head>
     <body>
@@ -31,7 +32,7 @@
                         {{ render_nav_item('login', 'Login') }}
                     {% else %}
                         {{ render_nav_item('admin', 'Admin Panel') }}
-                        {{ render_nav_item('logout', 'Logout') }}
+                        {{ render_nav_item('logout', 'Sign out') }}
                     {% endif %}
                 </ul>
                 <span class="nav-item">
@@ -49,7 +50,7 @@
         {% endif %}
         {% endwith %}
         
-        {# application content needs to be provided in the app_content block #}
+        {# application content needs to be provided in the content block #}
         
         <!-- <div class="text-center">
         {# block content #}{# endblock #}

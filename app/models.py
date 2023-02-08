@@ -22,7 +22,7 @@ class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100))
     description = db.Column(db.String(100))
-    body = db.Column(db.String(10000))
+    body = db.Column(db.String(50000))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     
     def __repr__(self):
