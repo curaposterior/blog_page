@@ -15,8 +15,23 @@ class RegistrationForm(FlaskForm):
     password2 = PasswordField('Repeat Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Register')
 
+
 class SendMailForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])
     subject = StringField('Subject', validators=[DataRequired()])
     email = EmailField('Email', validators=[DataRequired(), Email()])
     message = TextAreaField('Message', validators=[DataRequired()])
+    submit = SubmitField('Send message')
+
+class CreatePost(FlaskForm):
+    title = StringField('Title', validators=[DataRequired()])
+    description = TextAreaField('Description', validators=[DataRequired()])
+    body = TextAreaField('Post body', validators=[DataRequired()])
+    submit = SubmitField('Create post')
+
+
+class EditPost(FlaskForm):
+    title = StringField('Title', validators=[DataRequired()])
+    description = TextAreaField('Description', validators=[DataRequired()])
+    body = TextAreaField('Post body', validators=[DataRequired()])
+    submit = SubmitField('Confirm changes')

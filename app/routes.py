@@ -4,14 +4,14 @@ from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
 import sqlalchemy
 
-from app.forms import LoginForm, RegistrationForm, SendMailForm
+from app.forms import LoginForm, RegistrationForm, SendMailForm, CreatePost, EditPost
 from app import app, db
 from app.models import User, Post
 from sqlalchemy.exc import IntegrityError, DataError
 
 import markdown
 
-# ENDPOINTS aren't working yet
+
 @app.route("/", methods=['GET','POST'])
 @app.route("/home", methods=['GET','POST'])
 def index():
@@ -64,11 +64,10 @@ def logout():
     return redirect(url_for('index'))
 
 
-
 @app.route('/admin', methods=['GET', 'POST'])
 @login_required
 def admin():
-    return render_template('admin.html')
+    return render_template('admin_panel.html')
 
 
 @app.route("/about", methods=['GET'])
@@ -78,6 +77,7 @@ def about():
         flash("Email sent")
         redirect(url_for('about'))
     return render_template("about.html", form=form)
+
 
 @app.route("/post/<int:post_id>", methods=['GET'])
 def post(post_id: int):
@@ -95,10 +95,50 @@ def post(post_id: int):
         flash("Post doesn't exist")
         return redirect(url_for("index"))
     
-    
     return render_template("render_post.html", post=post)
 
+
 @login_required
-@app.route("/test", methods=['GET', 'POST'])
-def test():
-    return render_template('test_bootstrap.html')
+@app.route("/create", methods=['GET', 'POST'])
+def create():
+    form = CreatePost()
+    if form.validate_on_submit():
+        post = Post(title=form.title.data,
+                    description=form.description.data,
+                    body=form.body.data)
+        try:
+            db.session.add(post)
+            db.session.commit()
+            flash('Post added successfully')
+            return redirect(url_for('create'))
+        except IntegrityError or sqlalchemy.exc.DataError:
+            flash('Something went wrong, try again.')
+    return render_template("create.html", form=form)
+
+
+@login_required
+@app.route("/<int:post_id>/edit", methods=['GET', 'POST'])
+def edit(post_id: int):
+    try:
+        post = db.session.query(Post).where(Post.id == post_id).first()
+    except IntegrityError or sqlalchemy.exc.DataError:
+        flash("Post doesn't exist. Try again.")
+        return redirect(url_for('admin'))
+
+    form = EditPost(obj=post)
+    # form.populate_obj(obj=post)
+    if form.validate_on_submit():
+        form.populate_obj(obj=post)
+        db.session.commit()
+        flash("Post edited successfully")
+        return redirect(url_for('admin'))
+    return render_template('edit.html', title="Edit post", form=form)
+
+
+@login_required
+@app.route("/admin/edit", methods=['GET', 'POST'])
+def list_editable_posts():
+    page = request.args.get('page', type=int)
+    pagination = db.session.query(Post).paginate(page=page, per_page=10)
+    posts = pagination.items
+    return render_template('post_list_to_edit.html', pagination=pagination, posts=posts)

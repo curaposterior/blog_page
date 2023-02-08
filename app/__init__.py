@@ -5,6 +5,7 @@ from flask_bootstrap import Bootstrap5
 from flask_login import LoginManager
 from config import Config
 
+
 app = Flask(__name__)
 app.config.from_object(Config)
 db = SQLAlchemy(app)
