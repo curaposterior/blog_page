@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <br><br>
-    <div class="card">
-        <h1 class="text-center">{{ post['title'] }}</h1>
-        <div class="card-body">
-            <span class="badge badge-primary">#{{ post['id'] }}</span>
-            <span class="badge badge-default">{{ post['timestamp'] }}</span>
-            <hr>
-            <p>{{ post['body'] |safe }}</p>
+        <br><br>
+        <div class="card">
+            <h1 class="text-center">{{ post['title'] }}</h1>
+            <div class="card-body">
+                <span class="badge badge-primary">#{{ post['id'] }}</span>
+                <span class="badge badge-default">{{ post['timestamp'] }}</span>
+                <hr>
+                <p>{{ post['body'] | safe }}</p>
+            </div>
         </div>
-    </div>
-    <hr>
+        <hr>
 {% endblock %}

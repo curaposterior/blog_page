@@ -11,6 +11,11 @@
             {% block styles %}
                 <!-- Bootstrap CSS -->
                 {{ bootstrap.load_css() }}
+                <style>
+                  img {
+                    max-width: 100%;
+                  }
+                </style>
             {% endblock %}
             
             <title>{% block title %}{% endblock %}</title>
