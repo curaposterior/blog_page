@@ -12,11 +12,22 @@ from sqlalchemy.exc import IntegrityError, DataError
 import markdown
 
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
+
+@app.errorhandler(500)
+def internal_error(e):
+    db.session.rollback()
+    return render_template('500.html'), 500
+
+
 @app.route("/", methods=['GET','POST'])
 @app.route("/home", methods=['GET','POST'])
 def index():
     page = request.args.get('page', type=int)
-    pagination = db.session.query(Post).paginate(page=page, per_page=10)
+    pagination = db.session.query(Post).order_by(Post.timestamp.desc()).paginate(page=page, per_page=10)
     posts = pagination.items
     return render_template("index.html", title='Home page', pagination=pagination, posts=posts)
 
@@ -38,6 +49,15 @@ def register():
         flash('Congratulations, you are now a registered user!')
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
+
+
+@app.route("/contact", methods=['GET','POST'])
+def contact():
+    form = SendMailForm()
+    if form.validate_on_submit():
+        flash("Email sent")
+        redirect(url_for('about'))
+    return render_template('contact.html', form=form)
 
 
 @app.route("/login", methods=['GET', 'POST'])
@@ -126,7 +146,6 @@ def edit(post_id: int):
         return redirect(url_for('admin'))
 
     form = EditPost(obj=post)
-    # form.populate_obj(obj=post)
     if form.validate_on_submit():
         form.populate_obj(obj=post)
         db.session.commit()

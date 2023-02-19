@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% import 'bootstrap5/form.html' as wtf %}
+{% block content%}
+            <div class="container">
+                <div class="section" id="contact">
+                <div class="cc-contact-information">
+                    <div class="container" style="margin-top: 3rem;">
+                    <div class="cc-contact">
+                        <div class="row">
+                        <!-- <div class="col-md-9"> -->
+                            <div class="h4 text-center title" id="contact-us">
+                            Contact Me
+                        </div>
+                        <div class="card mb-0" data-aos="zoom-in">
+                            
+                            <div class="row">
+                            <div class="col-md-6">
+                                <div class="card-body">
+                                {{ wtf.render_form(form) }}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card-body">
+                                <p class="mb-0"><strong>Email</strong></p>
+                                <p>test@mail.com</p>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+{% endblock %}

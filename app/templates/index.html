@@ -1,21 +1,20 @@
 {% extends "base.html" %}
 {% from 'bootstrap5/pagination.html' import render_pager, render_pagination %}
-
 {% block content %}
-    </br>
-    <div class="section" id="posts">
-        <div class="card aos-init aos-animate">
-            <h1>Welcome</h1>
-            <div class="card-item">
-                This is item of a card
-            </div>
-        </div>
-    </div>
-    </br></br>
-    {% for post in posts %}
-        {% include 'post.html' %}
-    {% endfor %}
-    <div class="">
-        {{ render_pagination(pagination) }}
-    </div>
+                </br>
+                <div class="section" id="posts">
+                    <div class="card aos-init aos-animate">
+                        <h1 class="text-center">Posts</h1>
+                        <div class="card-item text-center">
+                            “<i>Reading is essential for those who seek to rise above the ordinary.”</i> - Jim Rohn
+                        </div>
+                    </div>
+                </div>
+                </br></br>
+                {% for post in posts %}
+                    {% include 'post.html' %}
+                {% endfor %}
+                <div class="">
+                    {{ render_pagination(pagination) }}
+                </div>
 {% endblock %}
