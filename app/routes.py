@@ -10,17 +10,8 @@ from app.models import User, Post
 from sqlalchemy.exc import IntegrityError, DataError
 
 import markdown
-
-
-@app.errorhandler(404)
-def page_not_found(e):
-    return render_template('404.html'), 404
-
-
-@app.errorhandler(500)
-def internal_error(e):
-    db.session.rollback()
-    return render_template('500.html'), 500
+from markdown.extensions import fenced_code, codehilite
+import pygments
 
 
 @app.route("/", methods=['GET','POST'])
@@ -110,7 +101,9 @@ def post(post_id: int):
         if post is None:
             flash("Post doesn't exist")
             return redirect(url_for("index"))
-        post.body = markdown.markdown(post.body)
+        
+        post.body = markdown.markdown(post.body, extensions=["fenced_code", "codehilite"])
+
     except IntegrityError or sqlalchemy.exc.DataError:
         flash("Post doesn't exist")
         return redirect(url_for("index"))
@@ -150,14 +143,20 @@ def edit(post_id: int):
         form.populate_obj(obj=post)
         db.session.commit()
         flash("Post edited successfully")
-        return redirect(url_for('admin'))
-    return render_template('edit.html', title="Edit post", form=form)
+        return redirect(url_for('post', post_id=post_id))
+    return render_template('edit.html', title="Edit post", form=form, id=post_id)
 
 
 @login_required
 @app.route("/admin/edit", methods=['GET', 'POST'])
 def list_editable_posts():
     page = request.args.get('page', type=int)
-    pagination = db.session.query(Post).paginate(page=page, per_page=10)
+    pagination = db.session.query(Post).order_by(Post.timestamp.desc()).paginate(page=page, per_page=10)
     posts = pagination.items
     return render_template('post_list_to_edit.html', pagination=pagination, posts=posts)
+
+
+@app.route("/robots.txt", methods=['GET'])
+def robots():
+    
+    return render_template('robots.txt')

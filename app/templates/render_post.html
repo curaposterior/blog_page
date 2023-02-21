@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-
 {% block content %}
         <br><br>
         <div class="card">
@@ -10,6 +9,11 @@
                 <hr>
                 <p>{{ post['body'] | safe }}</p>
             </div>
+            {% if current_user.is_anonymous %}
+                <p>Thanks for reading</p>
+            {% else %}
+                <a href="{{ url_for('edit', post_id=post.id) }}" class="btn btn-info" role="button">Edit post</a>
+            {% endif %}
         </div>
         <hr>
 {% endblock %}
