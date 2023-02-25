@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import render_template, flash, redirect, url_for, request
+from flask import render_template, flash, redirect, url_for, request, send_file
 from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
 import sqlalchemy
@@ -11,8 +11,7 @@ from sqlalchemy.exc import IntegrityError, DataError
 
 import markdown
 from markdown.extensions import fenced_code, codehilite
-import pygments
-
+from io import BytesIO
 
 @app.route("/", methods=['GET','POST'])
 @app.route("/home", methods=['GET','POST'])
@@ -118,7 +117,8 @@ def create():
     if form.validate_on_submit():
         post = Post(title=form.title.data,
                     description=form.description.data,
-                    body=form.body.data)
+                    body=form.body.data,
+                    img=form.img.data.read())
         try:
             db.session.add(post)
             db.session.commit()
@@ -139,6 +139,7 @@ def edit(post_id: int):
         return redirect(url_for('admin'))
 
     form = EditPost(obj=post)
+
     if form.validate_on_submit():
         form.populate_obj(obj=post)
         db.session.commit()
@@ -156,7 +157,15 @@ def list_editable_posts():
     return render_template('post_list_to_edit.html', pagination=pagination, posts=posts)
 
 
-@app.route("/robots.txt", methods=['GET'])
-def robots():
-    
-    return render_template('robots.txt')
+# @app.route("/robots.txt", methods=['GET'])
+# def robots():
+#     return render_template('robots.txt')
+
+
+@app.route("/images/<int:post_id>.jpg", methods=['GET'])
+def get_image(post_id: int):
+    post = db.session.query(Post).where(Post.id == post_id).first()
+    if post is None:
+        flash("Photo doesn't exist")
+        return redirect(url_for("create"))
+    return send_file(BytesIO(post.img), mimetype='image/jpg')

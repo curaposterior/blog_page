@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField, EmailField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField, EmailField, FileField
 from wtforms.validators import DataRequired, Email, ValidationError, EqualTo
+
 
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
@@ -23,10 +24,12 @@ class SendMailForm(FlaskForm):
     message = TextAreaField('Message', validators=[DataRequired()])
     submit = SubmitField('Send message')
 
+
 class CreatePost(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
     description = TextAreaField('Description', validators=[DataRequired()])
     body = TextAreaField('Post body', validators=[DataRequired()])
+    img = FileField('Image', validators=[DataRequired()])
     submit = SubmitField('Create post')
 
 
@@ -34,4 +37,6 @@ class EditPost(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
     description = TextAreaField('Description', validators=[DataRequired()])
     body = TextAreaField('Post body', validators=[DataRequired()])
+    #needs to be fixed
+    # img = FileField('Image', validators=[DataRequired()])
     submit = SubmitField('Confirm changes')

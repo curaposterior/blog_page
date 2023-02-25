@@ -6,7 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
-    password_hash = db.Column(db.String(128))
+    password_hash = db.Column(db.String(128), nullable=False)
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -19,9 +19,10 @@ class User(UserMixin, db.Model):
     
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(150))
-    description = db.Column(db.String(150))
-    body = db.Column(db.String(60000))
+    title = db.Column(db.String(150), nullable=False)
+    description = db.Column(db.String(150), nullable=False)
+    body = db.Column(db.String(60000), nullable=False)
+    img = db.Column(db.LargeBinary(), nullable=False)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     
     def __repr__(self):
