@@ -31,19 +31,15 @@
               <div class="collapse navbar-collapse" id="navbarText">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     {% if current_user.is_anonymous %}
-                        {{ render_nav_item('login', 'Login') }}
+                        {{ render_nav_item('about', 'About') }}
                     {% else %}
                         {{ render_nav_item('admin', 'Admin Panel') }}
                         {{ render_nav_item('logout', 'Sign out') }}
                     {% endif %}
                 </ul>
-                <ul class="navbar-nav ml-auto mb-2 mb-lg-0">
-                  {{ render_nav_item('about', 'About') }}
-                  {{ render_nav_item('contact', 'Contact') }}
-              </ul>
-                <!-- <span class="nav-item">
-                  <a class="nav-link" style="color: white;" href="{{ url_for('about') }}">About</a>
-                </span> -->
+                <!-- <ul class="navbar-nav ml-auto mb-2 mb-lg-0">
+                  
+              </ul> -->
               </div>
             </div>
           </nav>
