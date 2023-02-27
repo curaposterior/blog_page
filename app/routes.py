@@ -22,23 +22,23 @@ def index():
     return render_template("index.html", title='Home page', pagination=pagination, posts=posts)
 
 
-@app.route("/register", methods=['GET', 'POST'])
-def register():
-    if current_user.is_authenticated:
-        return redirect(url_for('index'))
-    form = RegistrationForm()
-    if form.validate_on_submit():
-        user = User(username=form.username.data)
-        user.set_password(form.password.data)
-        try:
-            db.session.add(user)
-            db.session.commit()
-        except IntegrityError:
-            flash('Try different username')
-            return redirect(url_for('register'))
-        flash('Congratulations, you are now a registered user!')
-        return redirect(url_for('login'))
-    return render_template('register.html', title='Register', form=form)
+# @app.route("/register", methods=['GET', 'POST'])
+# def register():
+#     if current_user.is_authenticated:
+#         return redirect(url_for('index'))
+#     form = RegistrationForm()
+#     if form.validate_on_submit():
+#         user = User(username=form.username.data)
+#         user.set_password(form.password.data)
+#         try:
+#             db.session.add(user)
+#             db.session.commit()
+#         except IntegrityError:
+#             flash('Try different username')
+#             return redirect(url_for('register'))
+#         flash('Congratulations, you are now a registered user!')
+#         return redirect(url_for('login'))
+#     return render_template('register.html', title='Register', form=form)
 
 
 @app.route("/contact", methods=['GET','POST'])
@@ -110,8 +110,9 @@ def post(post_id: int):
     return render_template("render_post.html", post=post)
 
 
-@login_required
+
 @app.route("/create", methods=['GET', 'POST'])
+@login_required
 def create():
     form = CreatePost()
     if form.validate_on_submit():
@@ -129,8 +130,9 @@ def create():
     return render_template("create.html", form=form)
 
 
-@login_required
+
 @app.route("/<int:post_id>/edit", methods=['GET', 'POST'])
+@login_required
 def edit(post_id: int):
     try:
         post = db.session.query(Post).where(Post.id == post_id).first()
@@ -148,8 +150,8 @@ def edit(post_id: int):
     return render_template('edit.html', title="Edit post", form=form, id=post_id)
 
 
-@login_required
 @app.route("/admin/edit", methods=['GET', 'POST'])
+@login_required
 def list_editable_posts():
     page = request.args.get('page', type=int)
     pagination = db.session.query(Post).order_by(Post.timestamp.desc()).paginate(page=page, per_page=10)
